@@ -1,0 +1,54 @@
+/* public/css/styles.css */
+
+/* Estilização dos labels dos campos para destacá-los */
+.form-label {
+  font-weight: bold;
+  color: #343a40; /* Cor escura para destaque */
+  display: flex;
+  align-items: center;
+}
+
+.form-label i {
+  margin-left: 5px;
+  color: #6c757d; /* Cor para o ícone de informação */
+  cursor: pointer;
+}
+
+/* Adiciona um asterisco vermelho para indicar campos obrigatórios */
+.form-label::after {
+  content: " *";
+  color: red;
+}
+
+/* Estilização do botão de reupload para destacá-lo */
+.btn-warning {
+  background-color: #ffc107;
+  border-color: #ffc107;
+}
+
+.btn-warning:hover {
+  background-color: #e0a800;
+  border-color: #d39e00;
+}
+
+/* Estilização para mensagens de erro */
+#error-message {
+  font-weight: bold;
+}
+
+/* Melhorar a aparência das listas de uploads */
+.list-group-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Estilização dos badges de status */
+.badge {
+  font-size: 0.9em;
+}
+
+/* Adicionar margem inferior aos campos de reupload */
+.input-group.d-none {
+  margin-top: 10px;
+}

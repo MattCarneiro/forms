@@ -1,0 +1,49 @@
+<!-- views/deleteForm.ejs -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Deletar Formulário</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <div class="container mt-5">
+    <h1 class="mb-4">Deletar Formulário</h1>
+    <div class="alert alert-danger" role="alert">
+      Você está prestes a deletar o formulário: <strong><%= formLink %></strong>
+    </div>
+    <div class="d-flex justify-content-between">
+      <button id="deleteButton" class="btn btn-danger">Deletar Formulário</button>
+      <a href="/" class="btn btn-secondary">Cancelar</a>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('deleteButton').addEventListener('click', () => {
+      if (confirm('Tem certeza que deseja deletar este formulário?')) {
+        fetch('/api/deleteForm', {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ link: '<%= formLink %>' }),
+        })
+        .then(response => response.json())
+        .then(data => {
+          alert(data.message);
+          window.location.href = '/';
+        })
+        .catch(error => {
+          console.error('Erro:', error);
+          alert('Erro ao deletar formulário.');
+        });
+      }
+    });
+  </script>
+
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

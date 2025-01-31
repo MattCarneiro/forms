@@ -1,0 +1,164 @@
+<!-- views/formStep.ejs -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title><%= form.title %> - Etapa <%= currentStep %> de <%= totalSteps %></title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+</head>
+<body>
+  <div class="container mt-5">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h1 class="card-title text-center mb-4"><%= form.title %></h1>
+        <% if (currentStep === 1) { %>
+          <p class="card-text"><%= form.subtitle %></p>
+          <p class="text-muted">
+            <!-- Lista dos campos como badges com status -->
+            <% form.fields.forEach(function(field) { %>
+              <% if (form.uploaded && form.uploaded[field.name]) { %>
+                <span class="badge bg-success me-1 mb-1">
+                  <i class="bi bi-check-circle"></i> <%= field.name.replace(/_/g, ' ') %>
+                </span>
+              <% } else { %>
+                <span class="badge bg-secondary me-1 mb-1"><%= field.name.replace(/_/g, ' ') %></span>
+              <% } %>
+            <% }); %>
+          </p>
+          <div class="d-flex justify-content-end">
+            <a href="/forms/<%= form.type %>/<%= form.id %>/<%= form.id2 %>/<%= form.code %>/step/2" class="btn btn-primary">Avançar</a>
+          </div>
+          <!-- Botão de resetar formulário removido -->
+          <!-- Se desejar manter a condição, mas sem o conteúdo:
+          <% if (form.uploaded && Object.keys(form.uploaded).length > 0) { %>
+            <!-- Conteúdo removido -->
+          <% } %>
+          -->
+        <% } else { %>
+          <!-- Verificação se há campos -->
+          <% if (form.fields && form.fields.length > 0) { %>
+            <h3 class="mb-3">Etapa <%= currentStep -1 %>: <%= form.fields[0].name.replace(/_/g, ' ') %></h3>
+          <% } else { %>
+            <h3 class="mb-3">Etapa <%= currentStep -1 %>: Campo não definido</h3>
+          <% } %>
+          
+          <!-- Exibir Campos já Enviados -->
+          <% if (currentStep > 1 && form.uploaded) { %>
+            <div class="mb-3">
+              <h5>Campos já enviados:</h5>
+              <ul>
+                <% Object.keys(form.uploaded).forEach(function(sentField) { %>
+                  <li><%= sentField.replace(/_/g, ' ') %></li>
+                <% }); %>
+              </ul>
+            </div>
+          <% } %>
+
+          <!-- Exibir Mensagens de Erro -->
+          <div id="error-message" class="alert alert-danger <%= errors && Object.keys(errors).length > 0 ? '' : 'd-none' %>">
+            <% if (errors && Object.keys(errors).length > 0) { %>
+              <% Object.values(errors).forEach(function(error) { %>
+                <p><%= error %></p>
+              <% }); %>
+            <% } %>
+          </div>
+
+          <form id="uploadForm" action="/forms/<%= form.type %>/<%= form.id %>/<%= form.id2 %>/<%= form.code %>/step/<%= currentStep %>" method="POST" enctype="multipart/form-data">
+            <div class="mb-4">
+              <label for="file_<%= form.fields[0].name %>" class="form-label">
+                <%= form.fields[0].name.replace(/_/g, ' ') %>:
+                <i class="bi bi-info-circle" data-bs-toggle="tooltip" data-bs-placement="top" title="Formato(s) permitido(s): <%= allowedFormats %>"></i>
+              </label>
+              <div class="input-group">
+                <input type="file" class="form-control <% if (errors && errors[form.fields[0].name]) { %>is-invalid<% } %>" name="file_<%= form.fields[0].name %>" id="file_<%= form.fields[0].name %>">
+              </div>
+              <% if (errors && errors[form.fields[0].name]) { %>
+                <div class="invalid-feedback">
+                  <%= errors[form.fields[0].name] %>
+                </div>
+              <% } %>
+            </div>
+
+            <div class="d-flex justify-content-between flex-wrap">
+              <% if (currentStep > 2) { %>
+                <a href="/forms/<%= form.type %>/<%= form.id %>/<%= form.id2 %>/<%= form.code %>/step/<%= currentStep -1 %>" class="btn btn-secondary mb-2">Voltar</a>
+              <% } else { %>
+                <a href="/forms/<%= form.type %>/<%= form.id %>/<%= form.id2 %>/<%= form.code %>" class="btn btn-secondary mb-2">Voltar</a>
+              <% } %>
+
+              <% if (currentStep < totalSteps) { %>
+                <button type="submit" class="btn btn-primary mb-2" id="submitButton" disabled>Avançar</button>
+                <a href="/forms/<%= form.type %>/<%= form.id %>/<%= form.id2 %>/<%= form.code %>/step/<%= currentStep +1 %>" class="btn btn-warning mb-2">Pular Documento</a>
+              <% } else { %>
+                <button type="submit" class="btn btn-success mb-2" id="submitButton" disabled>Finalizar</button>
+              <% } %>
+            </div>
+          </form>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    // Inicializar tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+
+    const allowedFileFormats = "<%= allowedFormats %>".split(',').map(format => format.trim().toLowerCase());
+
+    function validateFileType(file) {
+      const extension = file.name.split('.').pop().toLowerCase();
+      return allowedFileFormats.includes(extension);
+    }
+
+    function showErrorMessage(message) {
+      const errorMessage = document.getElementById('error-message');
+      errorMessage.innerHTML = message;
+      errorMessage.classList.remove('d-none');
+    }
+
+    function hideErrorMessage() {
+      const errorMessage = document.getElementById('error-message');
+      errorMessage.classList.add('d-none');
+      errorMessage.innerHTML = '';
+    }
+
+    document.querySelectorAll('input[type="file"]').forEach(input => {
+      input.addEventListener('change', function () {
+        const file = this.files[0];
+        if (file && !validateFileType(file)) {
+          showErrorMessage(`Tipo de arquivo não suportado: ${file.name}. Permitidos: ${allowedFileFormats.join(', ')}`);
+          this.value = ''; // Limpar o campo de arquivo
+        } else {
+          hideErrorMessage();
+        }
+        toggleSubmitButton();
+      });
+    });
+
+    function toggleSubmitButton() {
+      const fileInput = document.querySelector('input[type="file"]');
+      const hasFile = fileInput && fileInput.files.length > 0;
+      document.getElementById('submitButton').disabled = !hasFile;
+    }
+
+    document.getElementById('uploadForm').addEventListener('submit', function (event) {
+      const fileInput = this.querySelector('input[type="file"]');
+      if (fileInput && fileInput.files.length === 0) {
+        event.preventDefault();
+        alert('Por favor, selecione um arquivo para enviar.');
+      }
+    });
+
+    window.addEventListener('DOMContentLoaded', toggleSubmitButton);
+  </script>
+</body>
+</html>

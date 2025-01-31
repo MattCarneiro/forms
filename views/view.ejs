@@ -1,0 +1,48 @@
+<!-- views/view.ejs -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Uploads do Formulário</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <div class="container mt-5">
+    <h1>Uploads do Formulário</h1>
+    <ul class="list-group">
+      <% form.fields.forEach(function(field) { %>
+        <li class="list-group-item" id="field-<%= field.fieldId %>">
+          <div class="d-flex justify-content-between align-items-center">
+            <span><strong><%= field.name %>:</strong></span>
+            <% 
+              let uploadInfo = form.uploaded[field.name] || {};
+              let status = uploadInfo.status || 'nao_enviado';
+              let statusText = 
+                status === 'uploaded' ? 'Enviado' : 
+                status === 'pending' ? 'Enviando...' : 'Não Enviado';
+              let badgeClass = 
+                status === 'uploaded' ? 'bg-success' : 
+                status === 'pending' ? 'bg-warning' : 'bg-danger';
+            %>
+            <span class="badge <%= badgeClass %>" id="status-<%= field.fieldId %>">
+              <%= statusText %>
+            </span>
+          </div>
+          <% if (uploadInfo.url) { %>
+            <a href="<%= uploadInfo.url %>" target="_blank" class="btn btn-primary mt-2">Ver Arquivo</a>
+          <% } %>
+        </li>
+      <% }); %>
+    </ul>
+  </div>
+
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <script>
+    // Remover referências ao Socket.io
+    // Toda a lógica relacionada ao Socket.io foi removida
+  </script>
+</body>
+</html>

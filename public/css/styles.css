@@ -1,0 +1,53 @@
+/* public/css/styles.css */
+
+/* Garantir que o container ocupe a largura completa em telas pequenas */
+.container {
+  max-width: 100% !important;
+  padding: 15px;
+}
+
+/* Ajustar a margem superior para dispositivos móveis */
+.mt-5 {
+  margin-top: 3rem !important;
+}
+
+/* Ajustar os badges para melhor exibição em telas pequenas */
+.badge {
+  font-size: 0.9rem;
+}
+
+/* Ajustar o tamanho dos botões em dispositivos móveis */
+.btn {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+/* Melhorar a responsividade dos formulários */
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-group {
+  width: 100%;
+}
+
+/* Adicionar media queries para ajustes específicos */
+@media (min-width: 768px) {
+  /* Estilos para tablets */
+  .container {
+    max-width: 750px;
+  }
+
+  .btn {
+    width: auto;
+    margin-bottom: 0;
+  }
+}
+
+@media (min-width: 992px) {
+  /* Estilos para desktops */
+  .container {
+    max-width: 970px;
+  }
+}
